@@ -7,24 +7,25 @@ const char* firmware_url = "https://raw.githubusercontent.com/MangoGuy-08032025/
 const char* version_url  = "https://raw.githubusercontent.com/MangoGuy-08032025/Led_Matrix_SEEV/main/version.txt";
 String ota_result = "Nothing";
 bool startOTAUpdate(WiFiClient* client, int contentLength);
-void downloadAndApplyFirmware();
+int downloadAndApplyFirmware();
 String checkAndUpdateFirmware();
 
 String checkAndUpdateFirmware() 
 {
+  int download_result = 0;
       HTTPClient http;
       http.begin(version_url);
       int httpCode = http.GET();
 
       if (httpCode == 200) {
         String newVersion = http.getString();
-        ota_result = newVersion;
+        ota_result = "Updated " + newVersion;
         newVersion.trim();
 
         Serial.printf("Current version: %s, New version: %s\n", FW_VERSION, newVersion.c_str());
         if (newVersion != FW_VERSION) {
           Serial.println("New version available -> Start OTA update");
-          downloadAndApplyFirmware();
+          download_result = downloadAndApplyFirmware();
         } else {
           Serial.println("Already up-to-date -> Skip OTA");
           ota_result = "No newer version";
@@ -33,12 +34,17 @@ String checkAndUpdateFirmware()
         Serial.printf("Failed to fetch version file, HTTP code: %d\n", httpCode);
         ota_result = "Failed to fetch";
       }
+      if (download_result != 1)
+      {
+        ota_result = "Failed to download";
+      }
       http.end();
       return ota_result;
 }
 
 
-void downloadAndApplyFirmware() {
+int downloadAndApplyFirmware() {
+  int download_result = 0;
   HTTPClient http;
   http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
   http.begin(firmware_url);
@@ -54,20 +60,25 @@ void downloadAndApplyFirmware() {
       WiFiClient* stream = http.getStreamPtr();
       if (startOTAUpdate(stream, contentLength)) {
         Serial.println("OTA update successful, restarting...");
-        delay(2000);
-        ESP.restart();
+        download_result = 1;
+        // delay(2000);
+        // ESP.restart();
       } else {
+        download_result = -1;
         Serial.println("OTA update failed");
       }
     } else {
       Serial.println("Invalid firmware size");
+      download_result = -2;
     }
   }
   else 
   {
+    download_result = -3;
     Serial.printf("Failed to fetch firmware. HTTP code: %d\n", httpCode);
   }
   http.end();
+  return download_result;
 }
 
 

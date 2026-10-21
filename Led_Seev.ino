@@ -29,7 +29,7 @@ int GreenMaxTime = 400;
 int RedMaxTime = 400;
 int Green_old_time = 0;
 int Red_old_time = 0;
-
+String result_ota_update = "";
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 // From: https://gist.github.com/davidegironi/3144efdc6d67e5df55438cc3cba613c8
@@ -169,6 +169,27 @@ void drawText_OTA_failed()
   dma_display->setTextColor(myRED);
   dma_display->println("UPDATE FAILED"); 
 }
+
+void drawText_OTA_Successfully()
+{
+  // draw text with a rotating colour
+  dma_display->setTextSize(1);     // size 1 == 8 pixels high
+  dma_display->setFont(&kongtext4pt7b);
+  dma_display->setTextWrap(false); // Don't wrap at end of line - will do ourselves
+
+  dma_display->setCursor(2, 7);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println(DEFAULT_WIFI_OTA);
+  // dma_display->setFont(&kongtext4pt7b);
+  dma_display->setCursor(2, 15);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println(DEFAULT_PASS_OTA);
+
+  dma_display->setCursor(2, 23);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println(result_ota_update); 
+}
+
 void setup() {
 
   // Module configuration
@@ -207,9 +228,9 @@ void setup() {
       }
       dma_display->clearScreen();
       drawText_OTA_updating();
-      checkAndUpdateFirmware();  // gọi hàm OTA
+      result_ota_update = checkAndUpdateFirmware();  // gọi hàm OTA
       dma_display->clearScreen();
-      drawText_OTA_failed();
+      drawText_OTA_Successfully();
       while(1);
     }
 
