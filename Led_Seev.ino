@@ -20,8 +20,15 @@
 #define RED_SIG 33
 //MatrixPanel_I2S_DMA dma_display;
 MatrixPanel_I2S_DMA *dma_display = nullptr;
-
+int GreenStatus = 0;
+int RedStatus = 0;
 uint16_t myBLACK, myWHITE, myRED, myGREEN, myBLUE;
+uint32_t GreenStartTime = 0;
+uint32_t RedStartTime = 0;
+int GreenMaxTime = 400;
+int RedMaxTime = 400;
+int Green_old_time = 0;
+int Red_old_time = 0;
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
@@ -38,8 +45,19 @@ uint16_t colorWheel(uint8_t pos) {
   }
 }
 
-void drawText_Green(int colorWheelOffset)
+void drawText_Green()
 {
+  uint32_t hientai = (millis() - GreenStartTime) / 1000;
+  int32_t thoi_gian_con_lai = GreenMaxTime - hientai;
+  if(Green_old_time != thoi_gian_con_lai)
+  {
+    dma_display->clearScreen();
+    Green_old_time = thoi_gian_con_lai;
+  }
+  if (thoi_gian_con_lai < 0)
+  {
+    thoi_gian_con_lai = 0;
+  }
   // draw text with a rotating colour
   dma_display->setTextSize(1);     // size 1 == 8 pixels high
   dma_display->setFont(&CHU_TO);
@@ -53,12 +71,23 @@ void drawText_Green(int colorWheelOffset)
   dma_display->println('E');
   dma_display->setCursor(18, 31);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(dma_display->color565(0, 255, 0));
-  dma_display->println("400;");
+  dma_display->print(thoi_gian_con_lai);
+  dma_display->println(';');
 }
 
-void drawText_Red(int colorWheelOffset)
+void drawText_Red()
 {
-  
+  uint32_t hientai = (millis() - RedStartTime) / 1000;
+  int32_t thoi_gian_con_lai = RedMaxTime - hientai;
+  if(Red_old_time != thoi_gian_con_lai)
+  {
+    dma_display->clearScreen();
+    Red_old_time = thoi_gian_con_lai;
+  }
+  if (thoi_gian_con_lai < 0)
+  {
+    thoi_gian_con_lai = 0;
+  }
   // draw text with a rotating colour
   dma_display->setTextSize(1);     // size 1 == 8 pixels high
   dma_display->setFont(&CHU_TO);
@@ -74,7 +103,8 @@ void drawText_Red(int colorWheelOffset)
 
   dma_display->setCursor(18, 31);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(dma_display->color565(255, 0, 0));
-  dma_display->println("400;");
+  dma_display->print(thoi_gian_con_lai);
+  dma_display->println(';');
 }
 void drawText_OTA_connecting()
 {
@@ -83,23 +113,62 @@ void drawText_OTA_connecting()
   dma_display->setFont(&kongtext4pt7b);
   dma_display->setTextWrap(false); // Don't wrap at end of line - will do ourselves
 
-  dma_display->setCursor(7, 0);    // start at top left, with 8 pixel of spacing
+  dma_display->setCursor(2, 7);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myRED);
   dma_display->println(DEFAULT_WIFI_OTA);
   // dma_display->setFont(&kongtext4pt7b);
-  dma_display->setCursor(15, 0);    // start at top left, with 8 pixel of spacing
+  dma_display->setCursor(2, 15);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myRED);
   dma_display->println(DEFAULT_PASS_OTA);
 
-  dma_display->setCursor(23, 0);    // start at top left, with 8 pixel of spacing
+  dma_display->setCursor(2, 23);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myRED);
-  dma_display->println("VERSION:"); 
+  dma_display->println("VER:"); 
 
-  dma_display->setCursor(31, 0);    // start at top left, with 8 pixel of spacing
+  dma_display->setCursor(35, 23);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myRED);
   dma_display->println(FW_VERSION);
 }
 
+void drawText_OTA_updating()
+{
+  // draw text with a rotating colour
+  dma_display->setTextSize(1);     // size 1 == 8 pixels high
+  dma_display->setFont(&kongtext4pt7b);
+  dma_display->setTextWrap(false); // Don't wrap at end of line - will do ourselves
+
+  dma_display->setCursor(2, 7);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println(DEFAULT_WIFI_OTA);
+  // dma_display->setFont(&kongtext4pt7b);
+  dma_display->setCursor(2, 15);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println(DEFAULT_PASS_OTA);
+
+  dma_display->setCursor(2, 23);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myGREEN);
+  dma_display->println("UPDATING"); 
+}
+
+void drawText_OTA_failed()
+{
+  // draw text with a rotating colour
+  dma_display->setTextSize(1);     // size 1 == 8 pixels high
+  dma_display->setFont(&kongtext4pt7b);
+  dma_display->setTextWrap(false); // Don't wrap at end of line - will do ourselves
+
+  dma_display->setCursor(2, 7);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myRED);
+  dma_display->println(DEFAULT_WIFI_OTA);
+  // dma_display->setFont(&kongtext4pt7b);
+  dma_display->setCursor(2, 15);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myRED);
+  dma_display->println(DEFAULT_PASS_OTA);
+
+  dma_display->setCursor(2, 23);    // start at top left, with 8 pixel of spacing
+  dma_display->setTextColor(myRED);
+  dma_display->println("UPDATE FAILED"); 
+}
 void setup() {
 
   // Module configuration
@@ -123,27 +192,90 @@ void setup() {
 
   if ((digitalRead(GREEN_SIG) == LOW) or (digitalRead(RED_SIG)==LOW))
   {
-    WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
-    Serial.print(DEFAULT_WIFI_OTA);
-    Serial.print("-");
-    Serial.println(DEFAULT_PASS_OTA);
-    while (WiFi.status() != WL_CONNECTED) 
+    delay(100);
+    if ((digitalRead(GREEN_SIG) == LOW) or (digitalRead(RED_SIG)==LOW))
     {
-      Serial.print(".");
-      delay(50);
-      drawText_OTA_connecting();
+      WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
+      // Serial.print(DEFAULT_WIFI_OTA);
+      // Serial.print("-");
+      // Serial.println(DEFAULT_PASS_OTA);
+      while (WiFi.status() != WL_CONNECTED) 
+      {
+        // Serial.print(".");
+        delay(50);
+        drawText_OTA_connecting();
+      }
+      dma_display->clearScreen();
+      drawText_OTA_updating();
+      checkAndUpdateFirmware();  // gọi hàm OTA
+      dma_display->clearScreen();
+      drawText_OTA_failed();
+      while(1);
     }
-    dma_display->clearScreen();
-    checkAndUpdateFirmware();  // gọi hàm OTA
-    while(1);
+
   }
 }
 
 uint8_t wheelval = 0;
 void loop() {
+    if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
+    {
+      delay(10);
+      if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
+        {
+          GreenStartTime = millis();
+          GreenStatus = 1;
+        }
+    }
 
-    // animate by going through the colour wheel for the first two lines
-    drawText_Green(wheelval); 
-    delay(20);
-  
+    if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
+    {
+      delay(10);
+      if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
+      {
+        RedStartTime = millis();
+        RedStatus = 1;
+      }
+
+    }
+
+    if((digitalRead(RED_SIG)==LOW) && (digitalRead(GREEN_SIG)==LOW))
+    {
+      RedStartTime = 0;
+      GreenStartTime = 0;
+      GreenStatus = 0;
+      RedStatus = 0;
+    }
+
+    if((digitalRead(GREEN_SIG)==HIGH) && (GreenStatus == 1))
+    {
+      delay(10);
+      if((digitalRead(GREEN_SIG)==HIGH) && (GreenStatus == 1))
+      {
+        GreenStartTime = 0;
+        GreenStatus = 0;
+      }
+    }
+
+    if((digitalRead(RED_SIG)==HIGH) && (RedStatus == 1))
+    {
+      delay(10);
+      if((digitalRead(RED_SIG)==HIGH) && (RedStatus == 1))
+      {
+        RedStartTime = 0;
+        RedStatus = 0;
+      }
+    }
+    if (GreenStatus == 1)
+    {
+      drawText_Green();
+    }
+    if (RedStatus == 1)
+    {
+      drawText_Red();
+    }
+    if((GreenStatus == 0) && (RedStatus == 0))
+    {
+      dma_display->clearScreen();
+    } 
 }
