@@ -3,8 +3,8 @@
 #include <Update.h>
 #include <HTTPClient.h>
 #define FW_VERSION "15"
-const char* firmware_url = "https://raw.githubusercontent.com/MangoGuy-08032025/Auto_Oil_Pumping_Ducar/main/Auto_oil_pumping_new.ino.bin";
-const char* version_url  = "https://raw.githubusercontent.com/MangoGuy-08032025/Auto_Oil_Pumping_Ducar/main/version.txt";
+const char* firmware_url = "https://raw.githubusercontent.com/MangoGuy-08032025/Led_Matrix_SEEV/main/Led_Seev.ino.bin";
+const char* version_url  = "https://raw.githubusercontent.com/MangoGuy-08032025/Led_Matrix_SEEV/main/version.txt";
 String ota_result = "Nothing";
 bool startOTAUpdate(WiFiClient* client, int contentLength);
 void downloadAndApplyFirmware();

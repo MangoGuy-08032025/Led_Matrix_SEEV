@@ -121,7 +121,7 @@ void setup() {
   myGREEN = dma_display->color565(0, 255, 0);
   myBLUE = dma_display->color565(0, 0, 255);
 
-  if ((digitalRead(GREEN_SIG) == LOW) or (digitalRead(RED_SIG))
+  if ((digitalRead(GREEN_SIG) == LOW) or (digitalRead(RED_SIG)==LOW))
   {
     WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
     Serial.print(DEFAULT_WIFI_OTA);
@@ -131,7 +131,7 @@ void setup() {
     {
       Serial.print(".");
       delay(50);
-      drawText_OTA_connecting()
+      drawText_OTA_connecting();
     }
     dma_display->clearScreen();
     checkAndUpdateFirmware();  // gọi hàm OTA
@@ -143,7 +143,7 @@ uint8_t wheelval = 0;
 void loop() {
 
     // animate by going through the colour wheel for the first two lines
-    drawText(wheelval); 
+    drawText_Green(wheelval); 
     delay(20);
   
 }
