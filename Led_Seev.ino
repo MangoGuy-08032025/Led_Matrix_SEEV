@@ -233,7 +233,7 @@ void setup() {
       drawText_OTA_Successfully();
       while(1);
     }
-
+  Serial.println("Bắt đầu hiển thị");
   }
 }
 
