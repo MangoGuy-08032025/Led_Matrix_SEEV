@@ -11,8 +11,8 @@
 #include "ota_update.h"
 #include <C:/Users/adaocong/LDV/LED_SEEV/Fonts/kongtext4pt7b.h>
 
-#define DEFAULT_WIFI_OTA    "Linh Anh"
-#define DEFAULT_PASS_OTA    "08032025"
+#define DEFAULT_WIFI_OTA    "LDV_Inno"
+#define DEFAULT_PASS_OTA    "1NNovation!"
 #define PANEL_RES_X 64      // Number of pixels wide of each INDIVIDUAL panel module. 
 #define PANEL_RES_Y 32     // Number of pixels tall of each INDIVIDUAL panel module.
 #define PANEL_CHAIN 1      // Total number of panels chained one to another

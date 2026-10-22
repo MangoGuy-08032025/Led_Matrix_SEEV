@@ -44,7 +44,7 @@ String checkAndUpdateFirmware()
 
 
 int downloadAndApplyFirmware() {
-  int download_result = 0;
+  int download_result = 1;
   HTTPClient http;
   http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
   http.begin(firmware_url);
@@ -61,8 +61,8 @@ int downloadAndApplyFirmware() {
       if (startOTAUpdate(stream, contentLength)) {
         Serial.println("OTA update successful, restarting...");
         download_result = 1;
-        // delay(2000);
-        // ESP.restart();
+        delay(2000);
+        ESP.restart();
       } else {
         download_result = -1;
         Serial.println("OTA update failed");
