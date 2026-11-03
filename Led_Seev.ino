@@ -758,6 +758,7 @@ void loop() {
           {
               setup_mode = 1;
               dma_display->clearScreen();
+              drawText_Setting_Mode();
               WiFi.mode(WIFI_AP);
 
               WiFi.softAP(DEFAULT_SETUP_WIFI, DEFAULT_SETUP_PASS);
@@ -843,8 +844,4 @@ void loop() {
     {
       dma_display->clearScreen();
     }
-    if(setup_mode == 1)
-    {
-      drawText_Setting_Mode();
-    } 
 }
