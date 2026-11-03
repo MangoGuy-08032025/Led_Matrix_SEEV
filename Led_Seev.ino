@@ -688,7 +688,7 @@ void drawText_Wellcome()
 
   dma_display->setCursor(2, 31);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myGREEN);
-  dma_display->print("V_"); 
+  dma_display->print("V."); 
   dma_display->println(FW_VERSION);
 
 
@@ -785,6 +785,7 @@ void loop() {
       if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
         {
           GreenStartTime = millis();
+          dma_display->clearScreen();
           dma_display->setBrightness8(cfg.Green_brightness);
           GreenStatus = 1;
         }
@@ -796,6 +797,7 @@ void loop() {
       if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
       {
         RedStartTime = millis();
+        dma_display->clearScreen();
         dma_display->setBrightness8(cfg.Red_brightness);
         RedStatus = 1;
       }
