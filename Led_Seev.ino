@@ -722,6 +722,7 @@ void setup() {
   myGREEN = dma_display->color565(0, 255, 0);
   myBLUE = dma_display->color565(0, 0, 255);
   drawText_Wellcome();
+  delay(2000);
   if ((digitalRead(SETUP_SIG) == LOW))
   {
     delay(1000);
@@ -750,7 +751,7 @@ void setup() {
   }
   Thoi_Gian_Sang_Xanh = cfg.MAX_G;
   Thoi_Gian_Sang_Do = cfg.MAX_R;
-  delay(3000);
+  delay(1000);
 }
 
 void loop() {
@@ -795,7 +796,7 @@ void loop() {
     {
         server.handleClient();
         uint32_t hientai = (millis() - SetupStartTime) / 1000;
-        if(hientai > 60)
+        if(hientai > 120)
         {
           dma_display->clearScreen();
           setup_mode = 0;
