@@ -35,6 +35,7 @@ int RedStatus = 0;
 String Wifi = "Linh Anh";
 String Password = "08032025";
 uint16_t myBLACK, myWHITE, myRED, myGREEN, myBLUE;
+uint32_t SetupStartTime = 0;
 uint32_t GreenStartTime = 0;
 uint32_t RedStartTime = 0;
 int Thoi_Gian_Sang_Xanh = 400;
@@ -728,6 +729,7 @@ void setup() {
     {
       WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
       dma_display->clearScreen();
+      delay(100);
       // Serial.print(DEFAULT_WIFI_OTA);
       // Serial.print("-");
       // Serial.println(DEFAULT_PASS_OTA);
@@ -738,6 +740,7 @@ void setup() {
         drawText_OTA_connecting();
       }
       dma_display->clearScreen();
+      delay(100);
       drawText_OTA_updating();
       result_ota_update = checkAndUpdateFirmware();  // gọi hàm OTA
       dma_display->clearScreen();
@@ -754,10 +757,21 @@ void loop() {
 
   if (digitalRead(SETUP_SIG) == LOW )
       {
-          delay(1000);
-          if(digitalRead(SETUP_SIG) == LOW)
+          delay(100);
+          int count = 0;
+          for(int i = 0; i < 100; i++)
+          {
+            if(digitalRead(SETUP_SIG) == HIGH)
+            {
+              count = 0;
+            }
+            delay(10);
+            count++;
+          }
+          if((digitalRead(SETUP_SIG) == LOW) && (count > 90))
           {
               setup_mode = 1;
+              SetupStartTime = millis();
               dma_display->clearScreen();
               drawText_Setting_Mode();
               WiFi.mode(WIFI_AP);
@@ -780,11 +794,27 @@ void loop() {
     if (setup_mode == 1)
     {
         server.handleClient();
+        uint32_t hientai = (millis() - SetupStartTime) / 1000;
+        if(hientai > 60)
+        {
+          dma_display->clearScreen();
+          setup_mode = 0;
+          ESP.restart();
+        }
     }
     if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
     {
-      delay(10);
-      if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
+      int count = 0;
+      for(int i = 0; i < 10; i++)
+      {
+        if(digitalRead(GREEN_SIG) == HIGH)
+        {
+          count = 0;
+        }
+        delay(1);
+        count++;
+      }
+      if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH) && (count >= 8))
         {
           setup_mode = 0;
           GreenStartTime = millis();
@@ -796,8 +826,17 @@ void loop() {
 
     if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
     {
-      delay(10);
-      if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
+      int count = 0;
+      for(int i = 0; i < 10; i++)
+      {
+        if(digitalRead(RED_SIG) == HIGH)
+        {
+          count = 0;
+        }
+        delay(1);
+        count++;
+      }
+      if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH) && (count >= 8))
       {
         RedStartTime = millis();
         setup_mode = 0;
