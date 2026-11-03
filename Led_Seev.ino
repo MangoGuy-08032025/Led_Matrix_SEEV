@@ -688,7 +688,7 @@ void drawText_Wellcome()
 
   dma_display->setCursor(2, 31);    // start at top left, with 8 pixel of spacing
   dma_display->setTextColor(myGREEN);
-  dma_display->print("V."); 
+  dma_display->print("V:"); 
   dma_display->println(FW_VERSION);
 
 
@@ -727,6 +727,7 @@ void setup() {
     if ((digitalRead(SETUP_SIG) == LOW))
     {
       WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
+      dma_display->clearScreen();
       // Serial.print(DEFAULT_WIFI_OTA);
       // Serial.print("-");
       // Serial.println(DEFAULT_PASS_OTA);
@@ -785,6 +786,7 @@ void loop() {
       delay(10);
       if((digitalRead(GREEN_SIG)==LOW) && (GreenStatus == 0) && (digitalRead(RED_SIG)==HIGH))
         {
+          setup_mode = 0;
           GreenStartTime = millis();
           dma_display->clearScreen();
           dma_display->setBrightness8(cfg.Green_brightness);
@@ -798,6 +800,7 @@ void loop() {
       if((digitalRead(RED_SIG)==LOW) && (RedStatus == 0) && (digitalRead(GREEN_SIG)==HIGH))
       {
         RedStartTime = millis();
+        setup_mode = 0;
         dma_display->clearScreen();
         dma_display->setBrightness8(cfg.Red_brightness);
         RedStatus = 1;
