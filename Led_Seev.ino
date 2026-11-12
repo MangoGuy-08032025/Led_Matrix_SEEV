@@ -692,8 +692,6 @@ void drawText_Wellcome()
   dma_display->print("V:"); 
   dma_display->println(FW_VERSION);
 
-
-
 }
 
 
@@ -725,20 +723,34 @@ void setup() {
   delay(2000);
   if ((digitalRead(SETUP_SIG) == LOW))
   {
-    delay(1000);
-    if ((digitalRead(SETUP_SIG) == LOW))
+    delay(100);
+    int count = 0;
+    for(int i = 0; i < 100; i++)
+    {
+      if(digitalRead(SETUP_SIG) == HIGH)
+      {
+        count = 0;
+      }
+      delay(10);
+      count++;
+    }
+    if ((digitalRead(SETUP_SIG) == LOW) && (count > 90))
     {
       WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
       dma_display->clearScreen();
       delay(100);
-      // Serial.print(DEFAULT_WIFI_OTA);
-      // Serial.print("-");
-      // Serial.println(DEFAULT_PASS_OTA);
+
+      unsigned long ota_count = 0;
       while (WiFi.status() != WL_CONNECTED) 
       {
+        ota_count += 1;
         // Serial.print(".");
         delay(50);
         drawText_OTA_connecting();
+        if(ota_count > 1000)
+        {
+          ESP.restart();
+        }
       }
       dma_display->clearScreen();
       delay(100);
