@@ -725,16 +725,15 @@ void setup() {
   {
     delay(100);
     int count = 0;
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < 30000; i++)
     {
-      if(digitalRead(SETUP_SIG) == HIGH)
+      if(digitalRead(SETUP_SIG) == LOW)
       {
-        count = 0;
+        count++;
       }
-      delay(10);
-      count++;
+      delayMicroseconds(10);
     }
-    if ((digitalRead(SETUP_SIG) == LOW) && (count > 90))
+    if ((digitalRead(SETUP_SIG) == LOW) && (count > 29000))
     {
       WiFi.begin(DEFAULT_WIFI_OTA, DEFAULT_PASS_OTA);
       dma_display->clearScreen();
@@ -758,7 +757,7 @@ void setup() {
       result_ota_update = checkAndUpdateFirmware();  // gọi hàm OTA
       dma_display->clearScreen();
       drawText_OTA_Successfully();
-      while(1);
+      // while(1);
     }
   }
   Thoi_Gian_Sang_Xanh = cfg.MAX_G;
@@ -772,16 +771,16 @@ void loop() {
       {
           delay(100);
           int count = 0;
-          for(int i = 0; i < 100; i++)
+          for(int i = 0; i < 30000; i++)
           {
-            if(digitalRead(SETUP_SIG) == HIGH)
+            if(digitalRead(SETUP_SIG) == LOW)
             {
-              count = 0;
+              count++;
             }
-            delay(10);
-            count++;
+            delayMicroseconds(10);
+            
           }
-          if((digitalRead(SETUP_SIG) == LOW) && (count > 90))
+          if((digitalRead(SETUP_SIG) == LOW) && (count > 29950))
           {
               setup_mode = 1;
               SetupStartTime = millis();
